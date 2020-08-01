@@ -1,13 +1,35 @@
 cmake_minimum_required(VERSION 3.7)
 project(BosmaScheduler)
 
-set(CMAKE_CXX_STANDARD 11)
 
-include_directories(ccronexpr)
+# Option.
+set(BosmaScheduler_BuildTests "build tests" ON)
 
-# threads
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+# 3rdparty
+if(NOT TARGET ccronexpr_static)
+  add_subdirectory(3rdparty/ccronexpr)
+endif()
+if(NOT TARGET CTPL)
+  add_subdirectory(3rdparty/CTPL)
+endif()
+
+
+# packages
 find_package(Threads REQUIRED)
 
-add_executable(example example.cpp ccronexpr/ccronexpr.c)
-target_link_libraries(example Threads::Threads)
+# Target.
+add_library(Scheduler INTERFACE)
+target_include_directories(Scheduler INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(Scheduler INTERFACE
+  ccronexpr_static
+  Threads::Threads
+  CTPL
+)  
+
+# tests.
+if(BosmaScheduler_BuildTests)
+  add_subdirectory(tests)
+endif()
+
