@@ -7,3 +7,8 @@ add_executable(example example.cpp)
 target_link_libraries(example PRIVATE
   Scheduler
   )
+
+add_executable(test_ccronexpr test_ccronexpr.cpp)
+target_link_libraries(test_ccronexpr PRIVATE
+  Scheduler
+  )
