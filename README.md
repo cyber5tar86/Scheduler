@@ -24,32 +24,32 @@ Inspired by the [Rufus-Scheduler](https://github.com/jmettraux/rufus-scheduler) 
   Bosma::Scheduler s(max_n_threads);
 
   // every second call message("every second")
-  s.every(1s, message, "every second");
+  s.every(1s, message, 0, "every second");
 
   // in one minute
-  s.in(1min, []() { std::cout << "in one minute" << std::endl; });
+  s.in(1min, []() { std::cout << "in one minute" << std::endl; }, 0);
 
   // in one second run lambda, then wait a second, run lambda, and so on
   // different from every in that multiple instances of the function will not be run concurrently
   s.interval(1s, []() {
     std::this_thread::sleep_for(5s);
     std::cout << "once every 6s" << std::endl;
-  });
+  }, 0);
 
-  s.every(1min, []() { std::cout << "every minute" << std::endl; });
+  s.every(1min, []() { std::cout << "every minute" << std::endl; }, 0);
 
   // https://en.wikipedia.org/wiki/Cron
-  s.ccron("* * * * * *", []() { std::cout << "top of every minute" << std::endl; });
+  s.ccron("* * * * * *", []() { std::cout << "top of every minute" << std::endl; }, 0);
 
   // Time formats supported:
   // %Y/%m/%d %H:%M:%S, %Y-%m-%d %H:%M:%S, %H:%M:%S
   // With only a time given, it will run tomorrow if that time has already passed.
   // But with a date given, it will run immediately if that time has already passed.
-  s.at("2017-04-19 12:31:15", []() { std::cout << "at a specific time." << std::endl; });
+  s.at("2017-04-19 12:31:15", []() { std::cout << "at a specific time." << std::endl; }, 0);
 
-  s.ccron("* 5 0 * * *", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
+  s.ccron("* 5 0 * * *", []() { std::cout << "every day 5 minutes after midnight" << std::endl; }, 0);
 
-  // add cron task with id = 10. id default value is zero
+  // add cron task with id = 10.
   s.ccron("*/5 * * * * *", []() { std::cout << "every 5 seconds" << std::endl; }, 10);
   sleep(20);
   // remove cron task with id = 10
