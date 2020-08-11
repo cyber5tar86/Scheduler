@@ -30,7 +30,8 @@ int main() {
   });
 
   // https://en.wikipedia.org/wiki/Cron
-  s.cron("* * * * *", []() { std::cout << "top of every minute" << std::endl; });
+  //! [deprecated in this pulled repo]
+  // s.cron("* * * * *", []() { std::cout << "top of every minute" << std::endl; });
 
   // Time formats supported:
   // %Y/%m/%d %H:%M:%S, %Y-%m-%d %H:%M:%S, %H:%M:%S
@@ -48,7 +49,8 @@ int main() {
   //      │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday)
   //      │ │ │ │ │
   //      │ │ │ │ │
-  s.cron("5 0 * * *", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
+  //! [deprecated in this pulled repo]
+  // s.cron("5 0 * * *", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
 
   // using https://github.com/staticlibs/ccronexpr
   // Note: uses UTC unless compiled with -DCRON_USE_LOCAL_TIME

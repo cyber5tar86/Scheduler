@@ -3,10 +3,6 @@
 #include "Scheduler.h"
 #include <unistd.h>
 
-void message(const std::string &s) {
-  std::cout << s << std::endl;
-}
-
 int main() {
   // number of tasks that can run simultaneously
   // Note: not the number of tasks that can be added,

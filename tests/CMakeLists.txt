@@ -12,3 +12,8 @@ add_executable(test_ccronexpr test_ccronexpr.cpp)
 target_link_libraries(test_ccronexpr PRIVATE
   Scheduler
   )
+
+add_executable(test_task_remove test_task_remove.cpp)
+target_link_libraries(test_task_remove PRIVATE
+  Scheduler
+  )

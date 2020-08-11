@@ -6,7 +6,6 @@
 #include <ccronexpr.h>
 #include <ctpl_stl.h>
 
-#include "Cron.h"
 #include "InterruptableSleep.h"
 
 namespace Bosma {
@@ -14,20 +13,25 @@ namespace Bosma {
 
     class Task {
     public:
-        explicit Task(std::function<void()> &&f, bool recur = false, bool interval = false) :
-                f(std::move(f)), recur(recur), interval(interval) {}
+        explicit Task(std::function<void()> &&f, int id = 0, bool recur = false, bool interval = false) :
+	    f(std::move(f)), m_id{id}, recur(recur), interval(interval) {}
 
+	int id()const noexcept
+	{
+	    return m_id;
+	}
+	
         virtual Clock::time_point get_new_time() const = 0;
 
         std::function<void()> f;
-
+	int m_id;
         bool recur;
         bool interval;
     };
 
     class InTask : public Task {
     public:
-        explicit InTask(std::function<void()> &&f) : Task(std::move(f)) {}
+        explicit InTask(std::function<void()> &&f, int id=0) : Task(std::move(f), id) {}
 
         // dummy time_point because it's not used
         Clock::time_point get_new_time() const override { return Clock::time_point(Clock::duration(0)); }
@@ -35,25 +39,13 @@ namespace Bosma {
 
     class EveryTask : public Task {
     public:
-        EveryTask(Clock::duration time, std::function<void()> &&f, bool interval = false) :
-                Task(std::move(f), true, interval), time(time) {}
+        EveryTask(Clock::duration time, std::function<void()> &&f, int id = 0, bool interval = false) :
+	    Task(std::move(f), id, true, interval), time(time) {}
 
         Clock::time_point get_new_time() const override {
           return Clock::now() + time;
         };
         Clock::duration time;
-    };
-
-
-    class CronTask : public Task {
-    public:
-        CronTask(const std::string &expression, std::function<void()> &&f) : Task(std::move(f), true),
-                                                                             cron(expression) {}
-
-        Clock::time_point get_new_time() const override {
-          return cron.cron_to_next();
-        };
-        Cron cron;
     };
 
     class CCronTask : public Task {
@@ -68,8 +60,10 @@ namespace Bosma {
             std::string msg_;
         };
 
-        CCronTask(std::string expression, std::function<void()> &&f) : Task(std::move(f), true),
-                                                                       exp(std::move(expression)) {}
+        CCronTask(std::string expression, std::function<void()> &&f, int id=0) :
+	    Task(std::move(f), id, true),
+	    exp(std::move(expression))
+	{}
 
         Clock::time_point get_new_time() const override {
           cron_expr expr;
@@ -171,17 +165,9 @@ namespace Bosma {
         }
 
         template<typename _Callable, typename... _Args>
-        void cron(const std::string &expression, _Callable &&f, _Args &&... args) {
-          std::shared_ptr<Task> t = std::make_shared<CronTask>(expression, std::bind(std::forward<_Callable>(f),
-                                                                                     std::forward<_Args>(args)...));
-          auto next_time = t->get_new_time();
-          add_task(next_time, std::move(t));
-        }
-
-        template<typename _Callable, typename... _Args>
-        void ccron(const std::string &expression, _Callable &&f, _Args &&... args) {
+        void ccron(const std::string &expression, _Callable &&f, int id=0, _Args &&... args) {
           std::shared_ptr<Task> t = std::make_shared<CCronTask>(expression, std::bind(std::forward<_Callable>(f),
-                                                                                      std::forward<_Args>(args)...));
+                                                                                      std::forward<_Args>(args)...), id);
           auto next_time = t->get_new_time();
           add_task(next_time, std::move(t));
         }
@@ -192,6 +178,19 @@ namespace Bosma {
                                                                                 std::forward<_Args>(args)...), true);
           add_task(Clock::now(), std::move(t));
         }
+
+	void remove_task(int id)
+	{
+	    std::lock_guard<std::mutex> l{lock};
+	    for(auto iter = tasks.begin(); iter != tasks.end(); )
+	    {
+		if(iter->second->id() == id)
+		    iter = tasks.erase(iter);
+		else
+		    ++iter;
+	    }
+	    sleeper.interrupt();
+	}
 
     private:
         std::atomic<bool> done;
