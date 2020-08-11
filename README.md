@@ -48,5 +48,11 @@ Inspired by the [Rufus-Scheduler](https://github.com/jmettraux/rufus-scheduler) 
   s.at("2017-04-19 12:31:15", []() { std::cout << "at a specific time." << std::endl; });
 
   s.ccron("* 5 0 * * *", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
+
+  // add cron task with id = 10. id default value is zero
+  s.ccron("*/5 * * * * *", []() { std::cout << "every 5 seconds" << std::endl; }, 10);
+  sleep(20);
+  // remove cron task with id = 10
+  s.remove_task(10);
 ```
 See [example.cpp](example.cpp) for a full example.
