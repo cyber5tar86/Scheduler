@@ -17,17 +17,17 @@ int main() {
   Bosma::Scheduler s(max_n_threads);
 
   // every second call message("every second")
-  s.every(std::chrono::seconds(1), message, "every second");
+  s.every(std::chrono::seconds(1), message, 0, "every second");
 
   // in one minute
-  s.in(std::chrono::minutes(1), []() { std::cout << "in one minute" << std::endl; });
+  s.in(std::chrono::minutes(1), []() { std::cout << "in one minute" << std::endl; }, 0);
 
   // run lambda, then wait a second, run lambda, and so on
   // different from every in that multiple instances of the function will never be run concurrently
   s.interval(std::chrono::seconds(1), []() {
       std::cout << "right away, then once every 6s" << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(5));
-  });
+				      }, 0);
 
   // https://en.wikipedia.org/wiki/Cron
   //! [deprecated in this pulled repo]
@@ -37,7 +37,7 @@ int main() {
   // %Y/%m/%d %H:%M:%S, %Y-%m-%d %H:%M:%S, %H:%M:%S
   // With only a time given, it will run tomorrow if that time has already passed.
   // But with a date given, it will run immediately if that time has already passed.
-  s.at("2017-04-19 12:31:15", []() { std::cout << "at a specific time." << std::endl; });
+  s.at("2017-04-19 12:31:15", []() { std::cout << "at a specific time." << std::endl; }, 0);
 
   // built-in simple cron calculator, uses local time, see Cron.h
   // expression format:
@@ -61,7 +61,7 @@ int main() {
   // "0 */2 1-4 * * *",   "2012-07-01_09:00:00", "2012-07-02_01:00:00"
   // "0 0 7 ? * MON-FRI", "2009-09-26_00:42:55", "2009-09-28_07:00:00"
   // "0 30 23 30 1/3 ?",  "2011-04-30_23:30:00", "2011-07-30_23:30:00"
-  s.ccron("*/5 * 0-2 * * *", []() { std::cout << "every 5 seconds between 0:00-2:00 UTC" << std::endl; });
+  s.ccron("*/5 * 0-2 * * *", []() { std::cout << "every 5 seconds between 0:00-2:00 UTC" << std::endl; }, 0);
 
   // destructor of Bosma::Scheduler will cancel all schedules but finish any tasks currently running
   std::this_thread::sleep_for(std::chrono::minutes(10));

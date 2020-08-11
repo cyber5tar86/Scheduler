@@ -22,7 +22,7 @@ int main() {
   // "0 */2 1-4 * * *",   "2012-07-01_09:00:00", "2012-07-02_01:00:00"
   // "0 0 7 ? * MON-FRI", "2009-09-26_00:42:55", "2009-09-28_07:00:00"
   // "0 30 23 30 1/3 ?",  "2011-04-30_23:30:00", "2011-07-30_23:30:00"
-  s.ccron("*/5 * 0-2 * * *", []() { std::cout << "every 5 seconds between 0:00-2:00 UTC" << std::endl; });
+  s.ccron("*/5 * 0-2 * * *", []() { std::cout << "every 5 seconds between 0:00-2:00 UTC" << std::endl; }, 0);
 
   Bosma::CCronTask cc1("0 30 11 * * *", [](){});
   std::cout << cc1.get_new_time().time_since_epoch().count() << std::endl;
