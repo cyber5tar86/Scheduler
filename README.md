@@ -55,4 +55,6 @@ Inspired by the [Rufus-Scheduler](https://github.com/jmettraux/rufus-scheduler) 
   // remove cron task with id = 10
   s.remove_task(10);
 ```
-See [example.cpp](example.cpp) for a full example.
+See [example.cpp](tests/example.cpp) for a full example.
+See [test_task_remove.cpp](tests/test_task_remove.cpp) for example for removing tasks.
+
