@@ -1,6 +1,6 @@
 [submodule "3rdparty/ccronexpr"]
 	path = 3rdparty/ccronexpr
-	url = ssh://git@dev:/bbox/repository/3rdparty/ccronexpr.git
+	url = ssh://git@colo1:22000/home/git/repository/3rdparty/ccronexpr.git
 [submodule "3rdparty/CTPL"]
 	path = 3rdparty/CTPL
-	url = ssh://git@dev:/bbox/repository/3rdparty/CTPL.git
+	url = ssh://git@colo1:22000/home/git/repository/3rdparty/CTPL.git
