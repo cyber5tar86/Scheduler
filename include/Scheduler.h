@@ -16,6 +16,9 @@ namespace Bosma {
         explicit Task(std::function<void()> &&f, int id = 0, bool recur = false, bool interval = false) :
 	    f(std::move(f)), m_id{id}, recur(recur), interval(interval) {}
 
+	virtual ~Task()
+	{}
+
 	int id()const noexcept
 	{
 	    return m_id;
