@@ -1,7 +1,10 @@
 # Scheduler
 Modern C++ Header-Only Scheduling Library. Tasks run in thread pool. Requires C++11 and [ctpl_stl.h](https://github.com/vit-vit/CTPL) in the path.
 
-Inspired by the [Rufus-Scheduler](https://github.com/jmettraux/rufus-scheduler) gem. Offers mostly the same functionality.
+Inspired by the [mariusbancila/croncpp](https://github.com/mariusbancila/croncpp) gem and [Bosma/Scheduler](https://github.com/Bosma/Scheduler) gem. Offers mostly the same functionality.
+
+1. completely support [cron tab](https://github.com/mariusbancila/croncpp/blob/master/README.md)
+2. support gcc4.8.5 by removing get_time & put_time function 
 
 ```C++
   #include "Scheduler.h"
@@ -31,7 +34,7 @@ Inspired by the [Rufus-Scheduler](https://github.com/jmettraux/rufus-scheduler) 
   s.every(1min, []() { std::cout << "every minute" << std::endl; });
 
   // https://en.wikipedia.org/wiki/Cron
-  s.cron("* * * * *", []() { std::cout << "top of every minute" << std::endl; });
+  s.cron("*/2 * * * * 0", []() { std::cout << "top of every minute" << std::endl; });
 
   // Time formats supported:
   // %Y/%m/%d %H:%M:%S, %Y-%m-%d %H:%M:%S, %H:%M:%S
@@ -39,6 +42,6 @@ Inspired by the [Rufus-Scheduler](https://github.com/jmettraux/rufus-scheduler) 
   // But with a date given, it will run immediately if that time has already passed.
   s.at("2017-04-19 12:31:15", []() { std::cout << "at a specific time." << std::endl; });
 
-  s.cron("5 0 * * *", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
+  s.cron("5 0 * * * ?", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
 ```
 See [example.cpp](example.cpp) for a full example.

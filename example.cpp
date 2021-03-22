@@ -10,11 +10,12 @@ int main() {
   // number of tasks that can run simultaneously
   // Note: not the number of tasks that can be added,
   //       but number of tasks that can be run in parallel
-  unsigned int max_n_threads = 12;
+  unsigned int max_n_threads = 1;
 
   // Make a new scheduling object.
   // Note: s cannot be moved or copied
   Bosma::Scheduler s(max_n_threads);
+  std::cout << "start" <<time(0)<< std::endl;
 
   // every second call message("every second")
   s.every(std::chrono::seconds(1), message, "every second");
@@ -30,7 +31,7 @@ int main() {
   });
 
   // https://en.wikipedia.org/wiki/Cron
-  s.cron("* * * * *", []() { std::cout << "top of every minute" << std::endl; });
+  s.cron("*/2 * * * * 0", []() { std::cout << "top of every minute" << std::endl; });
 
   // Time formats supported:
   // %Y/%m/%d %H:%M:%S, %Y-%m-%d %H:%M:%S, %H:%M:%S
@@ -38,7 +39,7 @@ int main() {
   // But with a date given, it will run immediately if that time has already passed.
   s.at("2017-04-19 12:31:15", []() { std::cout << "at a specific time." << std::endl; });
 
-  s.cron("5 0 * * *", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
+  s.cron("5 0 * * * ?", []() { std::cout << "every day 5 minutes after midnight" << std::endl; });
 
   // destructor of Bosma::Scheduler will cancel all schedules but finish any tasks currently running
   std::this_thread::sleep_for(std::chrono::minutes(10));
